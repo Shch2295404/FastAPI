@@ -11,6 +11,43 @@ class BookingDAO(BaseDAO):
     model = Bookings
 
     @classmethod
+    async def find_all(cls, user_id: int):
+        """
+        Получает список всех бронирований пользователя с информацией о номерах.
+        """
+
+        """
+        SELECT 
+            b.room_id, 
+            b.user_id, 
+            b.date_from, 
+            b.date_to, 
+            b.price, 
+            b.total_cost,
+            b.total_days,
+            r.image_id, 
+            r.name, 
+            r.description, 
+            r.services
+        FROM bookings b
+        JOIN rooms r ON b.room_id = r.id
+        WHERE b.user_id = 3;
+        """
+
+        get_bookings = (
+            select(
+                Bookings.__table__.columns,
+                Rooms.__table__.columns,
+            )
+            .join(Rooms, Rooms.id == Bookings.room_id, isouter=True)
+            .where(Bookings.user_id == user_id)
+        )
+
+        async with async_session_maker() as session:
+            bookings = await session.execute(get_bookings)
+            return bookings.mappings().all()
+
+    @classmethod
     async def add(
         cls,
         user_id: int,

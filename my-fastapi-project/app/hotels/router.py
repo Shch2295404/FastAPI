@@ -1,0 +1,35 @@
+from datetime import date, datetime, timedelta
+from typing import List, Optional
+from fastapi import APIRouter, Depends, Request
+from fastapi.params import Query
+
+from app.hotels.dao import HotelDAO
+from app.hotels.schemas import SHotelInfo, SHotel
+from app.users.dependesies import get_current_user
+from app.exceptions import DateFromCannotBeAfterDateTo
+
+
+router = APIRouter(
+    prefix="/hotels",
+    tags=["Отели"],
+)
+
+@router.get("/{location}")
+async def get_hotels_by_location_and_time(
+    location: str,
+    date_from: date = Query(..., description=f"Например, {datetime.now().date()}"),
+    date_to: date = Query(..., description=f"Например, {(datetime.now() + timedelta(days=14)).date()}"),
+) -> List[SHotelInfo]:
+    """Получает список **всех отелей**, расположенных в определенной локации со свободными номерами."""
+    if date_from > date_to:
+        raise DateFromCannotBeAfterDateTo
+    hotels = await HotelDAO.find_all(location, date_from, date_to)
+    return hotels
+
+
+@router.get("/id/{hotel_id}")
+async def get_hotel_by_id(
+    hotel_id: int,
+) -> Optional[SHotel]:
+    """Получает информацию об отеле по его id."""
+    return await HotelDAO.find_one_or_none(id=hotel_id)
