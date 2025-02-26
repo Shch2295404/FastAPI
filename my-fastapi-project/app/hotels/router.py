@@ -1,7 +1,9 @@
+import asyncio
 from datetime import date, datetime, timedelta
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Request
 from fastapi.params import Query
+from fastapi_cache.decorator import cache
 
 from app.hotels.dao import HotelDAO
 from app.hotels.schemas import SHotelInfo, SHotel
@@ -15,12 +17,14 @@ router = APIRouter(
 )
 
 @router.get("/{location}")
+@cache(expire=30)
 async def get_hotels_by_location_and_time(
     location: str,
     date_from: date = Query(..., description=f"Например, {datetime.now().date()}"),
     date_to: date = Query(..., description=f"Например, {(datetime.now() + timedelta(days=14)).date()}"),
 ) -> List[SHotelInfo]:
     """Получает список **всех отелей**, расположенных в определенной локации со свободными номерами."""
+    await asyncio.sleep(3)
     if date_from > date_to:
         raise DateFromCannotBeAfterDateTo
     hotels = await HotelDAO.find_all(location, date_from, date_to)

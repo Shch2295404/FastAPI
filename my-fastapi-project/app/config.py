@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str
 
+    REDIS_HOST: str
+    REDIS_PORT: int
+
     # Со 2 версии Pydantic, class Config был заменен на атрибут model_config
     # class Config:
     #     env_file = ".env"
