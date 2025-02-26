@@ -6,17 +6,33 @@
     <title>Набронировал</title>
 </head>
 <body>
+
+    <!-- Форма для поиска отелей -->
+    <form action="/pages/hotels" method="GET" style="margin: 20px;">
+        <label for="location">Локация:</label>
+        <input type="text" id="location" name="location" required>
+        
+        <label for="date_from">Дата заселения:</label>
+        <input type="date" id="date_from" name="date_from" required>
+        
+        <label for="date_to">Дата выезда:</label>
+        <input type="date" id="date_to" name="date_to" required>
+        
+        <button type="submit">Найти</button>
+    </form>
+
     <div>
         {% for hotel in hotels %}
-        <div style="display: flex; margin-bottom: 15px; margin-left: 30px; ">
-            <img src="{{url_for('static', path='images/' + hotel.image_id|string + '.webp')}}" 
-            alt="Фото отеля {{hotel.name}}" width="200px">
-            <div style="margin-left: 20px;" >
-                <h2>{{hotel.name}}</h2>
-                <h4>{{hotel.location}}</h4>
+        <div style="display: flex; margin-bottom: 15px; margin-left: 30px;">
+            <img src="{{ url_for('static', path='images/' + hotel.image_id|string + '.webp') }}" 
+                 alt="Фото отеля {{ hotel.name }}" width="200px">
+            <div style="margin-left: 20px;">
+                <h2>{{ hotel.name }}</h2>
+                <h4>{{ hotel.location }}</h4>
             </div>
         </div>
         {% endfor %}
     </div>
+
 </body>
 </html>

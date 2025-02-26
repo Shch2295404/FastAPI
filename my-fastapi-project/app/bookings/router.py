@@ -1,4 +1,3 @@
-from datetime import date
 from typing import List
 
 from fastapi import APIRouter, Depends
@@ -8,7 +7,8 @@ from app.bookings.dao import BookingDAO
 from app.bookings.schemas import SNewBooking, SBookingInfo
 from app.users.models import Users
 from app.users.dependesies import get_current_user
-from app.exceptions import RoomCannotBeBookedException
+from app.bookings.service import BookingsService
+
 
 
 router = APIRouter(
@@ -26,18 +26,17 @@ async def get_bookings(user: Users = Depends(get_current_user)) -> List[SBooking
 
 @router.post("")
 async def add_booking(
-    room_id: int,
-    date_from: date,
-    date_to: date,
+    booking: SNewBooking,
     user: Users = Depends(get_current_user),
-) -> SNewBooking:
+):
     """
     Добавляет бронирование пользователя. Требуется аутентификация.
     """
-    booking = await BookingDAO.add(user_id=user.id, room_id=room_id, date_from=date_from, date_to=date_to)
-    if not booking:
-        raise RoomCannotBeBookedException
-    return SNewBooking.model_validate(booking)
+    new_booking = await BookingsService.add_booking(
+        booking,
+        user,
+    )
+    return new_booking
 
 
 @router.delete("/{booking_id}", status_code=status.HTTP_204_NO_CONTENT)
