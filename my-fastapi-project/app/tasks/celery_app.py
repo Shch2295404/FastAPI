@@ -8,3 +8,7 @@ celery_app = Celery(
     broker=f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}",
     include=["app.tasks.tasks"]
 )
+
+celery_app.conf.update(
+    broker_connection_retry_on_startup=True
+)

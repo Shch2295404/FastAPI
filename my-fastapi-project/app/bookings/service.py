@@ -1,5 +1,5 @@
 from app.bookings.dao import BookingDAO
-from app.bookings.schemas import SNewBooking
+from app.bookings.schemas import SNewBooking, SBooking
 from app.exceptions import RoomCannotBeBookedException
 from app.users.models import Users
 
@@ -19,5 +19,5 @@ class BookingsService:
         )
         if not booking:
             raise RoomCannotBeBookedException
-        booking = SNewBooking.model_validate(booking)
-        return booking
+        booking_dict = SBooking.model_validate(booking).model_dump()
+        return booking_dict
