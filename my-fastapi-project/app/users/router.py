@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 
-from app.users.schemas import SUserAuth
+from app.users.schemas import SUserAuth, SUserOut
 from app.users.dao import UsersDAO
 from app.users.auth import authenticate_user, create_access_token, get_password_hash
-from app.users.dependesies import get_current_user
+from app.users.dependencies import get_current_user
 from app.users.models import Users
 from app.exceptions import IncorrectEmailOrPasswordException, UserAlreadyExistsException
 
@@ -47,7 +47,7 @@ async def logout_user(response: Response):
     return {"detail": "User logged out successfully"}
 
 
-@router.get("/me")
+@router.get("/me", response_model=SUserOut)
 async def read_users_me(current_user: dict = Depends(get_current_user)):
     
     """ Возвращает данные о текущем авторизованном пользователе. """

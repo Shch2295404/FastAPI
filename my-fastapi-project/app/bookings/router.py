@@ -8,7 +8,7 @@ from app.bookings.dao import BookingDAO
 from app.bookings.schemas import SNewBooking, SBookingInfo
 from app.users.models import Users
 from app.bookings.service import BookingsService
-from app.users.dependesies import get_current_user
+from app.users.dependencies import get_current_user
 from app.tasks.tasks import send_booking_confirmation_email
 
 
