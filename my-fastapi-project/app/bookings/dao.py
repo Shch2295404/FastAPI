@@ -1,10 +1,11 @@
 from datetime import date
-from sqlalchemy import func, insert, select, and_
+
+from sqlalchemy import and_, func, insert, select
 
 from app.bookings.models import Bookings
-from app.hotels.rooms.models import Rooms
 from app.dao.base import BaseDAO
-from app.database import async_session_maker, engine
+from app.database import async_session_maker
+from app.hotels.rooms.models import Rooms
 
 
 class BookingDAO(BaseDAO):
@@ -17,17 +18,17 @@ class BookingDAO(BaseDAO):
         """
 
         """
-        SELECT 
-            b.room_id, 
-            b.user_id, 
-            b.date_from, 
-            b.date_to, 
-            b.price, 
+        SELECT
+            b.room_id,
+            b.user_id,
+            b.date_from,
+            b.date_to,
+            b.price,
             b.total_cost,
             b.total_days,
-            r.image_id, 
-            r.name, 
-            r.description, 
+            r.image_id,
+            r.name,
+            r.description,
             r.services
         FROM bookings b
         JOIN rooms r ON b.room_id = r.id
@@ -92,9 +93,9 @@ class BookingDAO(BaseDAO):
             # print(get_rooms_left.compile(engine, compile_kwargs={"literal_binds": True}))
 
             rooms_left = await session.execute(get_rooms_left)
-            room_left: int = rooms_left.scalar()
+            rooms_left: int = rooms_left.scalar()
 
-            if room_left > 0:
+            if rooms_left > 0:
                 get_price = select(Rooms.price).filter_by(id=room_id)
                 price = await session.execute(get_price)
                 price: int = price.scalar()
@@ -111,4 +112,3 @@ class BookingDAO(BaseDAO):
                 return new_booking.scalar()
             else:
                 return None
-

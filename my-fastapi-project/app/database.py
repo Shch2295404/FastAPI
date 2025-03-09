@@ -4,7 +4,6 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 from app.config import settings
 
-
 if settings.MODE == "TEST":
     DATABASE_URL = settings.TEST_DATABASE_URL
     DATABASE_PARAM = {"poolclass": NullPool}

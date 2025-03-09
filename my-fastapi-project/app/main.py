@@ -1,27 +1,23 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, logger
-from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
-from fastapi_cache.decorator import cache
-
 from redis import asyncio as aioredis
-from sqladmin import Admin, ModelView
+from sqladmin import Admin
 
-from app.config import settings
-from app.users.router import router as router_users
-from app.users.models import Users
-from app.bookings.router import router as router_bookings
-from app.hotels.router import router as router_hotels
-from app.hotels.rooms.router import router as router_rooms
-
-from app.pages.router import router as router_pages
-from app.images.router import router as router_images
-from app.database import engine
-from app.admin.views import BookingsAdmin, HotelsAdmin, RoomsAdmin, UsersAdmin
 from app.admin.auth import authentication_backend
+from app.admin.views import BookingsAdmin, HotelsAdmin, RoomsAdmin, UsersAdmin
+from app.bookings.router import router as router_bookings
+from app.config import settings
+from app.database import engine
+from app.hotels.rooms.router import router as router_rooms
+from app.hotels.router import router as router_hotels
+from app.images.router import router as router_images
+from app.pages.router import router as router_pages
+from app.users.router import router as router_users
 
 
 @asynccontextmanager
@@ -52,9 +48,9 @@ app.include_router(router_pages)
 app.include_router(router_images)
 
 
-# Подключение CORS, чтобы запросы к API могли приходить из браузера 
+# Подключение CORS, чтобы запросы к API могли приходить из браузера
 origins = [
-    # 3000 - порт, на котором работает фронтенд на React.js 
+    # 3000 - порт, на котором работает фронтенд на React.js
     "http://localhost:3000",
 ]
 
@@ -63,19 +59,19 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
-    allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers", 
+    allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers",
                    "Access-Control-Allow-Origin",
                    "Authorization"],
 )
 
 
-# @app.on_event("startup")  # <-- данный декоратор прогоняет код перед запуском FastAPI
+# @app.on_event("startup")  # данный декоратор прогоняет код перед запуском FastAPI
 # def startup():
 #     redis = aioredis.from_url("redis://localhost:6379", encoding="utf-8", decode_responses=True)
 #     FastAPICache.init(RedisBackend(redis), prefix="cache")
 
 
-# @app.on_event("shutdown")  # <-- данный декоратор прогоняет код после завершения программы
+# @app.on_event("shutdown")  # этот декоратор прогоняет код после завершения программы
 # def shutdown_event():
 #     pass
 

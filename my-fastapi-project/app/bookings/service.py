@@ -1,5 +1,5 @@
 from app.bookings.dao import BookingDAO
-from app.bookings.schemas import SNewBooking, SBooking
+from app.bookings.schemas import SBooking, SNewBooking
 from app.exceptions import RoomCannotBeBookedException
 from app.users.models import Users
 

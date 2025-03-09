@@ -1,5 +1,7 @@
 from enum import Enum
-from pydantic import BaseModel, EmailStr, ConfigDict
+
+from pydantic import BaseModel, ConfigDict, EmailStr
+
 
 # Определяем перечисление для ролей на уровне Pydantic
 class UserRoleEnum(str, Enum):

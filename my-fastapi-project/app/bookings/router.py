@@ -1,18 +1,14 @@
-from typing import List
 from datetime import date
+from typing import List
 
-from fastapi import APIRouter, Depends
-from fastapi import status
+from fastapi import APIRouter, Depends, status
 
 from app.bookings.dao import BookingDAO
-from app.bookings.schemas import SNewBooking, SBookingInfo
-from app.users.models import Users
+from app.bookings.schemas import SBookingInfo, SNewBooking
 from app.bookings.service import BookingsService
-from app.users.dependencies import get_current_user
 from app.tasks.tasks import send_booking_confirmation_email
-
-
-
+from app.users.dependencies import get_current_user
+from app.users.models import Users
 
 router = APIRouter(
     prefix="/bookings",

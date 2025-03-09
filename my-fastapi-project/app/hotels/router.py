@@ -1,15 +1,15 @@
 import asyncio
 from datetime import date, datetime, timedelta
 from typing import List, Optional
+
 from fastapi import APIRouter, Depends, Request
 from fastapi.params import Query
 from fastapi_cache.decorator import cache
 
-from app.hotels.dao import HotelDAO
-from app.hotels.schemas import SHotelInfo, SHotel
-from app.users.dependencies import get_current_user
 from app.exceptions import DateFromCannotBeAfterDateTo
-
+from app.hotels.dao import HotelDAO
+from app.hotels.schemas import SHotel, SHotelInfo
+from app.users.dependencies import get_current_user
 
 router = APIRouter(
     prefix="/hotels",
