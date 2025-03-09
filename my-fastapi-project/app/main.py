@@ -6,7 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
-from hawk_python_sdk.modules.fastapi import HawkFastapi
+from fastapi_versioning import VersionedFastAPI
+# from hawk_python_sdk.modules.fastapi import HawkFastapi
 # from hawk_python_sdk import Hawk
 from redis import asyncio as aioredis
 from sqladmin import Admin
@@ -44,7 +45,6 @@ app = FastAPI(
 # hawk = Hawk(settings.HAWK_TOKEN)
 # # app.add_middleware(HawkFastapi, hawk=hawk)
 
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 app.include_router(router_users)
 app.include_router(router_hotels)
@@ -85,6 +85,18 @@ app.add_middleware(
 # Замена устаревших @app.on_event("startup") и @app.on_event("shutdown")
 # в единую функцию lifespan
 
+
+
+app = VersionedFastAPI(app,
+    version_format='{major}',
+    prefix_format='/v{major}',
+    # description='Greet users with a nice message',
+    # middleware=[
+    #     Middleware(SessionMiddleware, secret_key='mysecretkey')
+    # ]
+)
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 admin = Admin(app, engine, authentication_backend=authentication_backend)
 admin.add_view(UsersAdmin)

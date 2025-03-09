@@ -2,6 +2,7 @@ from datetime import date
 from typing import List
 
 from fastapi import APIRouter, Depends, status
+from fastapi_versioning import version
 
 from app.bookings.dao import BookingDAO
 from app.bookings.schemas import SBookingInfo, SNewBooking
@@ -16,6 +17,7 @@ router = APIRouter(
 )
 
 @router.get("")
+@version(1)
 async def get_bookings(user: Users = Depends(get_current_user)) -> List[SBookingInfo]:
     """ 
     Получает список всех бронирований пользователя. Требуется аутентификация. 
@@ -24,6 +26,7 @@ async def get_bookings(user: Users = Depends(get_current_user)) -> List[SBooking
 
 
 @router.post("")
+@version(1)
 async def add_booking(
     booking: SNewBooking,
     user: Users = Depends(get_current_user),
@@ -40,6 +43,7 @@ async def add_booking(
 
 
 @router.delete("/{booking_id}", status_code=status.HTTP_204_NO_CONTENT)
+@version(1)
 async def delete_booking(booking_id: int, current_user: Users = Depends(get_current_user)):
     """
     Удаляет бронирование пользователя. Требуется аутентификация.
