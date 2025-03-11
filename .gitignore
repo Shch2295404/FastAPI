@@ -107,6 +107,7 @@ celerybeat.pid
 # Environments
 # Virtual environments
 .env
+.env-non-dev
 .venv
 env/
 venv/

@@ -1,5 +1,8 @@
 from fastapi import HTTPException, status
 
+# Создание собственных исключений (exceptions) было изменено
+# на предпочтительный подход. 
+# Подробнее в курсе: https://stepik.org/lesson/919993/step/15?unit=925776
 
 class BookingException(HTTPException):
     status_code = 500
@@ -31,10 +34,26 @@ class IncorrectTokenFormatException(BookingException):
 class UserIsNotPresentException(BookingException):
     status_code=status.HTTP_401_UNAUTHORIZED
 
-class RoomCannotBeBookedException(BookingException):
+class RoomFullyBooked(BookingException):
     status_code=status.HTTP_409_CONFLICT
     detail="Не осталось свободных номеров"
 
+class RoomCannotBeBooked(BookingException):
+    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+    detail="Не удалось забронировать номер ввиду неизвестной ошибки"
+
 class DateFromCannotBeAfterDateTo(BookingException):
     status_code=status.HTTP_400_BAD_REQUEST
-    detail="Дата начала бронирования не может быть позже даты окончания"
+    detail="Дата заезда не может быть позже даты выезда"
+
+class CannotBookHotelForLongPeriod(BookingException):
+    status_code=status.HTTP_400_BAD_REQUEST
+    detail="Невозможно забронировать отель сроком более месяца"
+
+class CannotAddDataToDatabase(BookingException):
+    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+    detail="Не удалось добавить запись"
+
+class CannotProcessCSV(BookingException):
+    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+    detail="Не удалось обработать CSV файл"

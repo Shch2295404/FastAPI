@@ -25,21 +25,10 @@ from app.pages.router import router as router_pages
 from app.users.router import router as router_users
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # при запуске
-    redis = aioredis.from_url(
-        f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}",
-        encoding="utf8",
-        decode_responses=True,
-    )
-    FastAPICache.init(RedisBackend(redis), prefix="cache")
-    yield
-    # при выключении
-
-
 app = FastAPI(
-    lifespan=lifespan,
+    title="Бронирование Отелей",
+    version="0.1.0",
+    root_path="/api",
 )
 
 # hawk = Hawk(settings.HAWK_TOKEN)
@@ -51,7 +40,7 @@ app.include_router(router_hotels)
 app.include_router(router_rooms)
 app.include_router(router_bookings)
 
-app.include_router(router_pages)
+# app.include_router(router_pages)
 app.include_router(router_images)
 
 
@@ -87,14 +76,27 @@ app.add_middleware(
 
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # при запуске
+    redis = aioredis.from_url(
+        f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}",
+        encoding="utf8",
+        decode_responses=True,
+    )
+    FastAPICache.init(RedisBackend(redis), prefix="cache")
+    yield
+    # при выключении
+
+
+
 app = VersionedFastAPI(app,
     version_format='{major}',
-    prefix_format='/v{major}',
-    # description='Greet users with a nice message',
-    # middleware=[
-    #     Middleware(SessionMiddleware, secret_key='mysecretkey')
-    # ]
+    prefix_format='/api/v{major}',
+    lifespan=lifespan,
 )
+
+app.include_router(router_pages)
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
