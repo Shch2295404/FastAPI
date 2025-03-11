@@ -3,6 +3,8 @@ services:
   db:
     image: postgres:17
     container_name: booking_db
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
     env_file:
       - .env-non-dev
     ports:
@@ -15,7 +17,7 @@ services:
       - 6379:6379
 
   booking:
-    image: booking_image
+    image: booking_app
     build:
       context: .
     container_name: booking_app
@@ -29,7 +31,7 @@ services:
       - redis
 
   celery:
-    image: celery_image
+    image: booking_celery
     build:
       context: .
     container_name: booking_celery
@@ -52,7 +54,7 @@ services:
   #     - redis
 
   flower:
-    image: flower_image
+    image: booking_flower
     build:
       context: .
     container_name: booking_flower
@@ -62,5 +64,30 @@ services:
     # command: ["/booking/docker/celery.sh", "flower"]
     depends_on:
       - redis
+      - celery
     ports:
       - 5555:5555
+
+  prometheus:
+    image: prom/prometheus:v2.43.0
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheusdata:/prometheus
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+
+  grafana:
+    image: grafana/grafana:9.4.7
+    container_name: grafana
+    volumes:
+      - grafanadata:/var/lib/grafana
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+      
+volumes:
+  postgresdata:
+  grafanadata:
+  prometheusdata:

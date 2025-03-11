@@ -9,6 +9,7 @@ from fastapi_cache.backends.redis import RedisBackend
 from fastapi_versioning import VersionedFastAPI
 # from hawk_python_sdk.modules.fastapi import HawkFastapi
 # from hawk_python_sdk import Hawk
+from prometheus_fastapi_instrumentator import Instrumentator
 from redis import asyncio as aioredis
 from sqladmin import Admin
 
@@ -20,8 +21,10 @@ from app.database import engine
 from app.hotels.rooms.router import router as router_rooms
 from app.hotels.router import router as router_hotels
 from app.images.router import router as router_images
+from app.importer.router import router as router_import
 from app.logger import logger
 from app.pages.router import router as router_pages
+from app.prometheus.router import router as router_prometheus
 from app.users.router import router as router_users
 
 
@@ -40,8 +43,10 @@ app.include_router(router_hotels)
 app.include_router(router_rooms)
 app.include_router(router_bookings)
 
-# app.include_router(router_pages)
+app.include_router(router_pages)
 app.include_router(router_images)
+app.include_router(router_prometheus)
+app.include_router(router_import)
 
 
 # Подключение CORS, чтобы запросы к API могли приходить из браузера
@@ -96,7 +101,19 @@ app = VersionedFastAPI(app,
     lifespan=lifespan,
 )
 
-app.include_router(router_pages)
+# app.include_router(router_pages)
+
+
+instrumentator = Instrumentator(
+    should_group_status_codes=False,
+    excluded_handlers=[
+        ".*admin.*",
+        "/metrics"
+    ]
+)
+
+instrumentator.instrument(app).expose(app)
+
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
